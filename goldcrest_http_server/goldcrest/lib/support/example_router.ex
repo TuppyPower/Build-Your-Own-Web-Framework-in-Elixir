@@ -3,16 +3,11 @@ defmodule Goldcrest.ExampleRouter do
 
   use Plug.Router
 
-  plug(Plug.Parsers,
-    parsers: [:urlencoded, :json],
-    json_decoder: Jason
-  )
-
-  plug(:match)
-  plug(:dispatch)
+  plug :match
+  plug :dispatch
 
   # goldcrest_get(conn, "/greet", to: {Goldcrest.ExampleController, :greet})
-  get("/greet", do: Goldcrest.ExampleController.call(conn, action: :greet))
+  get "/greet", do: Goldcrest.ExampleController.call(conn, action: :greet)
 
   get "/redirect_greet" do
     Goldcrest.ExampleController.call(conn, action: :redirect_greet)

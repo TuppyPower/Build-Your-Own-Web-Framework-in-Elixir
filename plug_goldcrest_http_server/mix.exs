@@ -5,7 +5,7 @@ defmodule Plug.Goldcrest.HTTPServer.MixProject do
     [
       app: :plug_goldcrest_http_server,
       version: "0.1.0",
-      elixir: "~> 1.14",
+      elixir: "~> 1.12",
       start_permanent: Mix.env() == :prod,
       deps: deps()
     ]
@@ -22,7 +22,7 @@ defmodule Plug.Goldcrest.HTTPServer.MixProject do
   defp deps do
     [
       {:goldcrest_http_server, path: "../goldcrest_http_server"},
-      {:plug, "~> 1.12"}
+      {:plug, "~> 1.12.1"}
     ]
   end
 end

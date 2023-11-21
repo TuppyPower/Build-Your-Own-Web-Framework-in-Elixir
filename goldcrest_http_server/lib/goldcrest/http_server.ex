@@ -46,7 +46,7 @@ defmodule Goldcrest.HTTPServer do
     Application.get_env(:goldcrest_http_server, :dispatcher)
   end
 
-  def respond(req, _method, _path) do
+  def respond(req, method, path) do
     # This part is different for different applications
 
     resp_string = "Hello World"
