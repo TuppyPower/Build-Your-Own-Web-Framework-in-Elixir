@@ -1,2 +1,0 @@
-defmodule TestGoldcrestHttpServer do
-end
