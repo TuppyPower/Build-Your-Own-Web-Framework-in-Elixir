@@ -23,7 +23,6 @@ defmodule Plug.Goldcrest.HTTPServer do
   def conn_from_req(req, method, path) do
     {:ok, {remote_ip, _}} = :inet.sockname(req)
     %URI{path: path, query: qs} = URI.parse(path)
-
     qs = qs || ""
 
     %Plug.Conn{
