@@ -1,14 +1,10 @@
 defmodule Goldcrest.Controller do
   import Plug.Conn
 
-  def content_type(conn, content_type) do
-    put_resp_content_type(conn, content_type)
-  end
-
   def render(conn, :json, data) when is_map(data) do
     conn
     |> content_type("application/json")
-    |> send_resp(200, Jason.encode!(data))
+    |> send_resp(conn.status || 200, Jason.encode!(data))
   end
 
   def render(conn, :json, data) when is_binary(data) do
@@ -22,7 +18,12 @@ defmodule Goldcrest.Controller do
   def render(conn, :html, data) when is_binary(data) do
     conn
     |> content_type("text/html")
-    |> send_resp(200, data)
+    |> send_resp(conn.status || 200, data)
+  end
+
+
+  def content_type(conn, content_type) do
+    put_resp_content_type(conn, content_type)
   end
 
   def redirect(conn, to: url) do

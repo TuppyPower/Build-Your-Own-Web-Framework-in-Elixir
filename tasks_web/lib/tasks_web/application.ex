@@ -1,4 +1,4 @@
-defmodule ExampleServerHtmlEex.Application do
+defmodule TasksWeb.Application do
   # See https://hexdocs.pm/elixir/Application.html
   # for more information on OTP Applications
   @moduledoc false
@@ -9,16 +9,23 @@ defmodule ExampleServerHtmlEex.Application do
   def start(_type, _args) do
     children = [
       {
-        Plug.Goldcrest.HTTPServer,
+        Plug.Cowboy,
         [
-          plug: ExampleServerHtmlEex.Router,
+          plug: TasksWeb.Router,
           port: 4040,
+          scheme: :http,
           options: []
         ]
+      },
+      {
+        TasksWeb.Tasks,
+        []
       }
     ]
 
-    opts = [strategy: :one_for_one, name: ExampleServerHtmlEex.Supervisor]
+    # See https://hexdocs.pm/elixir/Supervisor.html
+    # for other strategies and supported options
+    opts = [strategy: :one_for_one, name: TasksWeb.Supervisor]
     Supervisor.start_link(children, opts)
   end
 end

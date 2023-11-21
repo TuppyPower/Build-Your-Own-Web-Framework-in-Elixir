@@ -20,8 +20,8 @@ defmodule Goldcrest.MixProject do
   defp deps do
     [
       {:jason, "~> 1.2.2"},
-      {:plug_cowboy, ">= 0.0.0"},
-      {:plug_goldcrest_http_server, path: "../plug_goldcrest_http_server"}
+      {:plug_cowboy, ">= 0.0.0"}
+      # {:plug_goldcrest_http_server, path: "../plug_goldcrest_http_server"}
     ]
   end
 end
