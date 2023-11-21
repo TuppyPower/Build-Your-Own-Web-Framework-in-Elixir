@@ -1,22 +1,34 @@
 defmodule Goldcrest.View do
-  require EEx
-  alias Goldcrest.Controller
+  defmacro __using__(opts) do
+    quote do
+      @opts unquote(opts)
 
-  def render(view_module, conn, file, assigns) do
-    contents =
-      file
-      |> html_file_path()
-      |> EEx.eval_file(assigns: assigns)
+      def __goldcrest_view_using_options__, do: @opts
 
-    Controller.render(conn, :html, contents)
-  end
+      def render(conn, file, assigns) do
+        Goldcrest.ResponseHelpers.render(
+          conn,
+          file,
+          %{
+            assigns: assigns,
+            opts: [
+              functions: helper_functions()
+            ]
+          }
+        )
+      end
 
-  defp html_file_path(file) do
-    templates_path()
-    |> Path.join(file)
-  end
-
-  defp templates_path do
-    Application.fetch_env!(:goldcrest, :templates_path)
+      defp helper_functions do
+        [
+          {
+            __MODULE__,
+            :functions
+            |> __MODULE__.__info__()
+            |> List.delete({:__goldcrest_view_using_options__, 0})
+            |> List.delete({:render, 3})
+          }
+        ]
+      end
+    end
   end
 end

@@ -27,7 +27,6 @@ defmodule TasksWeb.Router do
     params = Map.merge(conn.params, body_params)
     conn = %{conn | body_params: body_params, params: params}
 
-    IO.inspect(conn, label: "conn")
     conn
   end
 

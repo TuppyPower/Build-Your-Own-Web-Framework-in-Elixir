@@ -1,50 +1,39 @@
 defmodule Goldcrest.Controller do
   import Plug.Conn
 
-  def render(conn, :json, data) when is_map(data) do
-    conn
-    |> content_type("application/json")
-    |> send_resp(conn.status || 200, Jason.encode!(data))
-  end
+  defmacro __using__(opts) do
+    quote do
+      use Plug.Builder
+      import Plug.Conn
 
-  def render(conn, :json, data) when is_binary(data) do
-    data = ensure_json!(data)
+      import Goldcrest.ResponseHelpers, except: [render: 3]
 
-    conn
-    |> content_type("application/json")
-    |> send_resp(conn.status || 200, data)
-  end
+      @opts unquote(opts)
 
-  def render(conn, :html, data) when is_binary(data) do
-    conn
-    |> content_type("text/html")
-    |> send_resp(conn.status || 200, data)
-  end
+      @default_view_module __MODULE__
+                           |> Module.split()
+                           |> List.update_at(-1, fn str ->
+                             String.replace(str, "Controller", "View")
+                           end)
+                           |> Module.concat()
 
+      @view_module @opts[:view_module] || @default_view_module
 
-  def content_type(conn, content_type) do
-    put_resp_content_type(conn, content_type)
-  end
+      def render(conn, file, assigns) do
+        @view_module.render(conn, file, assigns)
+      end
 
-  def redirect(conn, to: url) do
-    body = redirection_body(url)
+      def __goldcrest_controller_using_options__, do: @opts
 
-    conn
-    |> put_resp_header("location", url)
-    |> content_type("text/html")
-    |> send_resp(conn.status || 302, body)
-  end
+      def __goldcrest_controller_view_module__, do: @view_module
 
-  defp redirection_body(url) do
-    html = Plug.HTML.html_escape(url)
+      @before_compile Goldcrest.Controller.BeforeCompileHelpers
 
-    "<html><body>You are being <a href=\"#{html}\">redirected</a>" <>
-      ".</body></html>"
-  end
+      def call(conn, action: action) do
+        conn = super(conn, [])
 
-  defp ensure_json!(data) do
-    data
-    |> Jason.decode!()
-    |> Jason.encode!()
+        apply(__MODULE__, action, [conn, conn.params])
+      end
+    end
   end
 end
